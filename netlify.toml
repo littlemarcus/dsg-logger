@@ -6,7 +6,7 @@
 
 [[redirects]]
   from = "/test-page/*"
-  to = "https://test-astro-caching.netlify.app/image-cdn/"
+  to = "https://test-astro-caching.netlify.app/image-cdn/:splat"
   status = 200
   force = true
 
