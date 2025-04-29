@@ -5,10 +5,8 @@
   publish = "public"
 
 [[redirects]]
-  from = "/test-page/*"
-  to = "https://test-astro-caching.netlify.app/image-cdn/:splat"
-  status = 200
-  force = true
+  from = "docs/blog/:urlSlug/foo"
+  to = "docs/blog/:urlSlug/test-page"
 
   ## (optional) Settings for Netlify Dev
   ## https://github.com/netlify/cli/blob/main/docs/netlify-dev.md#project-detection
