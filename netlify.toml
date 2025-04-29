@@ -5,8 +5,8 @@
   publish = "public"
 
 [[redirects]]
-  from = "docs/blog/:urlSlug/foo"
-  to = "docs/blog/:urlSlug/test-page"
+  from = "/docs/blog/:urlSlug/foo"
+  to = "/docs/blog/:urlSlug/test-page"
 
   ## (optional) Settings for Netlify Dev
   ## https://github.com/netlify/cli/blob/main/docs/netlify-dev.md#project-detection
