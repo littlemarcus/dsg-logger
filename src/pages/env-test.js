@@ -1,102 +1,71 @@
-import React from "react"
+import * as React from "react"
 
 const EnvTestPage = () => {
-  // Get all environment variables that start with GATSBY_
-  const gatsbyEnvVars = Object.keys(process.env)
-    .filter(key => key.startsWith('GATSBY_'))
-    .reduce((obj, key) => {
-      obj[key] = process.env[key]
-      return obj
-    }, {})
+  const [fetchResult, setFetchResult] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [fetchError, setFetchError] = useState(null)
 
-  // Example: Access a specific GATSBY_ env var
-  const testVar = process.env.GATSBY_TEST_VAR
+  // Environment variables
   const apiUrl = process.env.GATSBY_API_URL
-  const environment = process.env.GATSBY_ENVIRONMENT
+  const apiKey = process.env.GATSBY_API_KEY
 
-  // Template literal interpolation examples
-  const buildApiEndpoint = (endpoint) => `${apiUrl}/${endpoint}`
-  const fullApiPath = `${apiUrl}/users/123`
-  const dynamicMessage = `API is configured for: ${apiUrl || 'No URL set'}`
+  // Test fetch with environment variable interpolation
+  const testFetch = async () => {
+    setIsLoading(true)
+    setFetchError(null)
+    setFetchResult(null)
+
+    try {
+      // Your pattern: template literal with env vars
+      const fetchUrl = `${apiUrl}/api/drupal-config?api-key=${apiKey}`
+      
+      console.log('Fetch URL:', fetchUrl)
+      
+      const response = await fetch(fetchUrl)
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data. Status: ${response.status}`)
+      }
+
+      const data = await response.text()
+      setFetchResult({
+        url: fetchUrl,
+        status: response.status,
+        data: data.substring(0, 300) + (data.length > 300 ? '...' : '')
+      })
+    } catch (error) {
+      setFetchError(error.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Mock test to show URL construction
+  const testMockFetch = () => {
+    const mockUrl = `${apiUrl}/api/drupal-config?api-key=${apiKey}`
+    setFetchResult({
+      url: mockUrl,
+      status: 'mock',
+      data: 'Mock response - URL constructed successfully!'
+    })
+  }
 
   return (
-    <>
-    <div style={{ padding: '2rem', fontFamily: 'monospace' }}>
-      <h1>Gatsby Environment Variables Test</h1>
+    <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: '800px' }}>
+      <h1>GATSBY_API_KEY Fetch Test</h1>
       
-      <div style={{ marginBottom: '2rem' }}>
-        <h2>Environment Info</h2>
-        <p><strong>Node Environment:</strong> {process.env.NODE_ENV}</p>
-        <p><strong>Gatsby Stage:</strong> {process.env.GATSBY_STAGE || 'Not set'}</p>
+      <div style={{ marginBottom: '2rem', background: '#f5f5f5', padding: '1rem', borderRadius: '4px' }}>
+        <p><strong>API URL:</strong> {apiUrl || 'Not set'}</p>
+        <p><strong>API Key:</strong> {apiKey ? '***' + apiKey.slice(-4) : 'Not set'}</p>
+        <p><strong>Template:</strong> <code>{`\`\${apiUrl}/api/drupal-config?api-key=\${apiKey}\``}</code></p>
       </div>
 
       <div style={{ marginBottom: '2rem' }}>
-        <h2>All GATSBY_ Prefixed Variables</h2>
-        {Object.keys(gatsbyEnvVars).length > 0 ? (
-          <div style={{ background: '#f5f5f5', padding: '1rem', borderRadius: '4px' }}>
-            {Object.entries(gatsbyEnvVars).map(([key, value]) => (
-              <p key={key}>
-                <strong>{key}:</strong> {value}
-              </p>
-            ))}
-          </div>
-        ) : (
-          <p style={{ color: '#666' }}>No GATSBY_ prefixed environment variables found</p>
-        )}
-      </div>
-
-      <div style={{ marginBottom: '2rem' }}>
-        <h2>Specific GATSBY_ Variables</h2>
-        <div style={{ background: '#f5f5f5', padding: '1rem', borderRadius: '4px' }}>
-          <p><strong>GATSBY_TEST_VAR:</strong> {testVar || 'Not set'}</p>
-          <p><strong>GATSBY_API_URL:</strong> {apiUrl || 'Not set'}</p>
-          <p><strong>GATSBY_ENVIRONMENT:</strong> {environment || 'Not set'}</p>
-        </div>
-      </div>
-
-      <div style={{ marginBottom: '2rem' }}>
-        <h2>Template Literal Interpolation Examples</h2>
-        <div style={{ background: '#e8f4f8', padding: '1rem', borderRadius: '4px' }}>
-          <p><strong>Base API URL:</strong> <code>{apiUrl || 'Not set'}</code></p>
-          <p><strong>Dynamic endpoint:</strong> <code>{buildApiEndpoint('users')}</code></p>
-          <p><strong>Full API path:</strong> <code>{fullApiPath}</code></p>
-          <p><strong>Dynamic message:</strong> {dynamicMessage}</p>
-          
-          {apiUrl && (
-            <div style={{ marginTop: '1rem', padding: '0.5rem', background: '#d4edda', borderRadius: '4px' }}>
-              <p><strong>Example fetch URL:</strong></p>
-              <code>{`fetch(\`\${process.env.GATSBY_API_URL}/posts\`)`}</code>
-              <p style={{ marginTop: '0.5rem' }}>
-                <strong>Would resolve to:</strong> <code>fetch('{apiUrl}/posts')</code>
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-        {Object.keys(gatsbyEnvVars).length > 0 ? (
-          <div style={{ background: '#f5f5f5', padding: '1rem', borderRadius: '4px' }}>
-            {Object.entries(gatsbyEnvVars).map(([key, value]) => (
-              <p key={key}>
-                <strong>{key}:</strong> {value}
-              </p>
-            ))}
-          </div>
-        ) : (
-          <p style={{ color: '#666' }}>No GATSBY_ prefixed environment variables found</p>
-        )}
-      </div>
-
-      <div style={{ marginBottom: '2rem' }}>
-        <h2>Runtime Interpolation Test</h2>
         <button 
-          onClick={() => {
-            const testEndpoint = 'data'
-            const interpolatedUrl = `${process.env.GATSBY_API_URL}/${testEndpoint}`
-            alert(`Interpolated URL: ${interpolatedUrl}`)
-          }}
+          onClick={testMockFetch}
           style={{
-            padding: '0.5rem 1rem',
-            background: '#007acc',
+            padding: '0.75rem 1.5rem',
+            background: '#28a745',
             color: 'white',
             border: 'none',
             borderRadius: '4px',
@@ -104,46 +73,59 @@ const EnvTestPage = () => {
             marginRight: '1rem'
           }}
         >
-          Test URL Interpolation
+          Test URL Construction
         </button>
         
         <button 
-          onClick={() => {
-            const message = `Hello from ${process.env.GATSBY_ENVIRONMENT || 'unknown'} environment!`
-            alert(message)
-          }}
+          onClick={testFetch}
+          disabled={isLoading || !apiUrl || !apiKey}
           style={{
-            padding: '0.5rem 1rem',
-            background: '#28a745',
+            padding: '0.75rem 1.5rem',
+            background: '#007acc',
             color: 'white',
             border: 'none',
             borderRadius: '4px',
-            cursor: 'pointer'
+            cursor: (isLoading || !apiUrl || !apiKey) ? 'not-allowed' : 'pointer',
+            opacity: (isLoading || !apiUrl || !apiKey) ? 0.6 : 1
           }}
         >
-          Test Environment Interpolation
+          {isLoading ? 'Fetching...' : 'Test Real Fetch'}
         </button>
       </div>
 
-      <div style={{ fontSize: '0.9rem', color: '#666' }}>
-        <h3>💡 Tips:</h3>
-        <ul>
-          <li>Only variables prefixed with <code>GATSBY_</code> are available in the browser</li>
-          <li>Add your variables to <code>.env.development</code> or <code>.env.production</code></li>
-          <li>Restart your development server after adding new environment variables</li>
-          <li>Example: <code>GATSBY_TEST_VAR=hello-world</code></li>
-        </ul>
+      {fetchResult && (
+        <div style={{ background: '#d4edda', padding: '1rem', borderRadius: '4px', marginBottom: '1rem' }}>
+          <h3>✅ Result:</h3>
+          <p><strong>URL:</strong> <code style={{ wordBreak: 'break-all' }}>{fetchResult.url}</code></p>
+          <p><strong>Status:</strong> {fetchResult.status}</p>
+          <div style={{ marginTop: '0.5rem' }}>
+            <strong>Response:</strong>
+            <pre style={{ background: '#f8f9fa', padding: '0.5rem', borderRadius: '4px', overflow: 'auto' }}>
+              {fetchResult.data}
+            </pre>
+          </div>
+        </div>
+      )}
+
+      {fetchError && (
+        <div style={{ background: '#f8d7da', padding: '1rem', borderRadius: '4px' }}>
+          <h3>❌ Error:</h3>
+          <p>{fetchError}</p>
+          <p style={{ fontSize: '0.9em', color: '#666' }}>
+            This is normal if the API endpoint doesn't exist. Check that the URL was constructed correctly above.
+          </p>
+        </div>
+      )}
+
+      <div style={{ marginTop: '2rem', fontSize: '0.9em', color: '#666' }}>
+        <p><strong>Setup:</strong> Add these to your <code>.env.development</code>:</p>
+        <pre style={{ background: '#f8f9fa', padding: '0.5rem', borderRadius: '4px' }}>
+{`GATSBY_API_URL=https://your-api.com
+GATSBY_API_KEY=your-secret-key`}
+        </pre>
       </div>
-      </>
-    )
+    </div>
+  )
 }
 
 export default EnvTestPage
-
-// Optional: Add metadata for the page
-export const Head = () => (
-  <>
-    <title>Environment Variables Test</title>
-    <meta name="description" content="Test page for Gatsby environment variables" />
-  </>
-)
