@@ -4,6 +4,7 @@ const EnvTestPage = () => {
   const [fetchResult, setFetchResult] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [fetchError, setFetchError] = useState(null)
+  const [lastFetchUrl, setLastFetchUrl] = useState(null)
 
   // Environment variables
   const apiUrl = process.env.GATSBY_API_URL
@@ -20,6 +21,7 @@ const EnvTestPage = () => {
       const fetchUrl = `${apiUrl}/api/drupal-config?api-key=${apiKey}`
       
       console.log('Fetch URL:', fetchUrl)
+      setLastFetchUrl(fetchUrl) // Show on page
       
       const response = await fetch(fetchUrl)
       
@@ -43,6 +45,7 @@ const EnvTestPage = () => {
   // Mock test to show URL construction
   const testMockFetch = () => {
     const mockUrl = `${apiUrl}/api/drupal-config?api-key=${apiKey}`
+    setLastFetchUrl(mockUrl) // Show on page
     setFetchResult({
       url: mockUrl,
       status: 'mock',
@@ -92,6 +95,15 @@ const EnvTestPage = () => {
           {isLoading ? 'Fetching...' : 'Test Real Fetch'}
         </button>
       </div>
+
+      {lastFetchUrl && (
+        <div style={{ marginBottom: '2rem', background: '#e3f2fd', padding: '1rem', borderRadius: '4px' }}>
+          <h3>🔍 Last Fetch URL:</h3>
+          <code style={{ wordBreak: 'break-all', background: '#f5f5f5', padding: '0.5rem', borderRadius: '4px', display: 'block' }}>
+            {lastFetchUrl}
+          </code>
+        </div>
+      )}
 
       {fetchResult && (
         <div style={{ background: '#d4edda', padding: '1rem', borderRadius: '4px', marginBottom: '1rem' }}>
