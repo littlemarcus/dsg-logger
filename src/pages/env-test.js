@@ -1,5 +1,4 @@
-import * as React from "react"
-import { useState } from "react"
+import React, { useState } from "react"
 
 const EnvTestPage = () => {
   const [fetchResult, setFetchResult] = useState(null)
@@ -57,7 +56,7 @@ const EnvTestPage = () => {
       
       <div style={{ marginBottom: '2rem', background: '#f5f5f5', padding: '1rem', borderRadius: '4px' }}>
         <p><strong>API URL:</strong> {apiUrl || 'Not set'}</p>
-        <p><strong>API Key:</strong> {apiKey ? '***' + apiKey.slice(-4) : 'Not set'}</p>
+        <p><strong>API Key Raw Value:</strong> {apiKey || 'Not set'}</p>
         <p><strong>Template:</strong> <code>{`\`\${apiUrl}/api/drupal-config?api-key=\${apiKey}\``}</code></p>
       </div>
 
