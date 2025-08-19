@@ -5,8 +5,10 @@
   publish = "public"
 
 [[redirects]]
-  from = "/docs/blog/:urlSlug/foo"
-  to = "/docs/blog/:urlSlug/test-page"
+  from = "/test/*"
+  to = "/using-typescript/:splat"
+  status = 200
+  force = true
 
   ## (optional) Settings for Netlify Dev
   ## https://github.com/netlify/cli/blob/main/docs/netlify-dev.md#project-detection
